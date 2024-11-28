@@ -23,6 +23,11 @@ import java.util.ArrayList;
 
 public class ManageProgramController {
 
+    public TableColumn ColId;
+    public TableView tblStudent;
+    public TableColumn ColName;
+    public TableColumn ColAddress;
+    public TableColumn ColNumber;
     @FXML
     private TableColumn<?, ?> ColDuration;
 
