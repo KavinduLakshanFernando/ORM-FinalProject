@@ -83,13 +83,8 @@ public class RegistrationBOImpl implements RegistrationBO {
     }
 
     @Override
-    public ObservableList<RegistrationTM> getAllRegistrations() {
-        List<RegistrationTM> registrations = new ArrayList<>();
-        List<Registration> registration = registretionDAO.getAll();
-        for (Registration r : registration) {
-            registrations.add(new RegistrationTM(r.getRegId(),r.getStudent(),r.getProgram(),r.getRegistrationDate(),r.getPaidAmount()));
-        }
-        return FXCollections.observableArrayList(registrations);
+    public List<Object[]> loadAllRegistrationDetails() {
+        return registretionDAO.loadAllRegistrationDetails();
     }
 }
 

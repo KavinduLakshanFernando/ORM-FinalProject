@@ -16,8 +16,9 @@ import java.util.Date;
 
 public class RegistrationTM {
     private int regId;
-    private Student student;
-    private Program program;
-    private Date registrationDate;
+    private String studentId;
+    private String studentName;
+    private String programId;
+    private String programName;
     private double paidAmount;
 }

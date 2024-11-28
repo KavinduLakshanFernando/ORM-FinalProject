@@ -12,8 +12,10 @@ import lk.ijse.bo.custom.StudentBO;
 import lk.ijse.dto.ProgramDTO;
 import lk.ijse.dto.StudentDTO;
 import lk.ijse.dto.UserDTO;
+import lk.ijse.entity.Student;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class ManageStudentController {
 
@@ -59,6 +61,7 @@ StudentBO studentBO = (StudentBO) BoFactory.getBoFactory().getBO(BoFactory.BOTyp
 
 
     public void initialize() {
+//        registerDate.setValue(LocalDate.parse(LocalDate.now().toString()));
         activeUser = LoginPageController.getActiveUser();
         setcellvaluefactory();
         getallStudent();
@@ -103,23 +106,61 @@ StudentBO studentBO = (StudentBO) BoFactory.getBoFactory().getBO(BoFactory.BOTyp
         String tel = txtNumber.getText();
         String regDate = String.valueOf(registerDate.getValue());
 
-        StudentDTO studentDto = new StudentDTO(id, name, address, tel, regDate);
-        boolean result = studentBO.addStudent(studentDto , activeUser);
-        if (result){
-            new Alert(Alert.AlertType.CONFIRMATION, "Add Successful").show();
-            getallStudent();
-            clearfields();
+        if (id.isEmpty() || name.isEmpty() || address.isEmpty() || tel.isEmpty() || regDate.isEmpty()) {
+            new Alert(Alert.AlertType.ERROR, "Please fill all fields").show();
+        }else {
+
+            StudentDTO studentDto = new StudentDTO(id, name, address, tel, regDate);
+            boolean result = studentBO.addStudent(studentDto, activeUser);
+            if (result) {
+                new Alert(Alert.AlertType.CONFIRMATION, "Add Successful").show();
+                getallStudent();
+                clearfields();
+            }
         }
     }
 
     @FXML
     void btnSearchOnAction(ActionEvent event) {
-
+        String id = txtId.getText();
+        if (!txtId.getText().isEmpty()) {
+            Student student = studentBO.searchStudent(id);
+            if (student != null) {
+                txtId.setText(String.valueOf(student.getId()));
+                txtName.setText(student.getName());
+                txtAddress.setText(student.getAddress());
+                txtNumber.setText(student.getTel());
+                registerDate.setValue(LocalDate.parse(student.getRegDate()));
+            } else {
+                new Alert(Alert.AlertType.INFORMATION, "Student not found!").show();
+            }
+        }
     }
 
     @FXML
     void btnUpdateOnAction(ActionEvent event) {
+        String id = txtId.getText();
+        String name = txtName.getText();
+        String address = txtAddress.getText();
+        String tel = txtNumber.getText();
+        String regDate = String.valueOf(registerDate.getValue());
 
+        if (id.isEmpty() || name.isEmpty() || address.isEmpty() || tel.isEmpty() || regDate.isEmpty()) {
+            new Alert(Alert.AlertType.ERROR, "Please fill all fields").show();
+        }else {
+            StudentDTO studentDTO = new StudentDTO(id,name,address,tel,regDate);
+
+            try {
+                boolean isSaved = studentBO.updateStudent(studentDTO);
+                if (isSaved) {
+                    new Alert(Alert.AlertType.CONFIRMATION, "student Updated!").show();
+                    getallStudent();
+                    clearfields();
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     void clearfields(){
@@ -137,6 +178,7 @@ StudentBO studentBO = (StudentBO) BoFactory.getBoFactory().getBO(BoFactory.BOTyp
             txtName.setText(studentDTO.getName());
             txtAddress.setText(studentDTO.getAddress());
             txtNumber.setText(studentDTO.getTel());
+//            registerDate.setValue(LocalDate.parse(studentDTO.getRegDate()));
         }
     }
 }

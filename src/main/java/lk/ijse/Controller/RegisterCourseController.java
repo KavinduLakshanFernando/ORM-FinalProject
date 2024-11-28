@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import lk.ijse.bo.BoFactory;
 import lk.ijse.bo.custom.PaymentBO;
@@ -25,6 +26,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RegisterCourseController {
     ProgramBO programBO = (ProgramBO) BoFactory.getBoFactory().getBO(BoFactory.BOTypes.PROGRAM);
@@ -91,6 +93,17 @@ public class RegisterCourseController {
         setCMBName();
         generateNewID();
         paymentType();
+        getAllRegistrations();
+        setCellValueFactory();
+    }
+
+    private void setCellValueFactory() {
+        colRegId.setCellValueFactory(new PropertyValueFactory<>("regId"));
+        colStudentId.setCellValueFactory(new PropertyValueFactory<>("studentId"));
+        colStudentName.setCellValueFactory(new PropertyValueFactory<>("studentName"));
+        colProgramId.setCellValueFactory(new PropertyValueFactory<>("programId"));
+        colProgramName.setCellValueFactory(new PropertyValueFactory<>("programName"));
+        colPaidAmount.setCellValueFactory(new PropertyValueFactory<>("paidAmount"));
     }
 
     void setCMBName() {
@@ -105,7 +118,23 @@ public class RegisterCourseController {
     }
 
     private void getAllRegistrations(){
-        ObservableList<RegistrationTM> registrations = registrationBo.getAllRegistrations();
+        ObservableList<RegistrationTM> getAllRegistraytion = FXCollections.observableArrayList();
+
+        List<Object[]> allReg = registrationBo.loadAllRegistrationDetails();
+
+        for (Object[] row : allReg) {
+            int regId = (Integer) row[0];
+            String studentId = (String) row[1];
+            String studentName = (String) row[2];
+            String programId = (String) row[3];
+            String programName = (String) row[4];
+            double paidAmount = (Double) row[5];
+
+            RegistrationTM details = new RegistrationTM(regId, studentId,studentName,programId,programName,paidAmount);
+            getAllRegistraytion.add(details);
+        }
+
+        tblRegistration.setItems(getAllRegistraytion);
     }
 
     @FXML
@@ -127,6 +156,7 @@ public class RegisterCourseController {
         boolean isSaved = registrationBo.saveRegistration(registrationDTO, paymentDTO);
         if (isSaved) {
             new Alert(Alert.AlertType.CONFIRMATION, "Registration Successful!").show();
+            getAllRegistrations();
         } else {
             new Alert(Alert.AlertType.ERROR, "Failed to save the registration").show();
         }

@@ -45,8 +45,14 @@ public class StudentDAOImpl implements StudentDAO {
 
 
     @Override
-    public boolean update(Student entity) {
-        return false;
+    public boolean update(Student student) {
+        Session session = SessionFactoryConfiguration.getInstance().getSession();
+        Transaction transaction = session.beginTransaction();
+
+        session.update(student);
+        transaction.commit();
+        session.close();
+        return true;
     }
 
     @Override

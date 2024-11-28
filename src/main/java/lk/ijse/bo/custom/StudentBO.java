@@ -22,4 +22,5 @@ public interface StudentBO extends SuperBo {
 
     List<Object[]> getPaymentDetails(String id);
 
+    boolean updateStudent(StudentDTO studentDTO);
 }

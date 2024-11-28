@@ -58,4 +58,9 @@ public class StudentBOImpl implements StudentBO {
         return studentDAO.getPaymentDetails(id);
     }
 
+    @Override
+    public boolean updateStudent(StudentDTO s) {
+        return studentDAO.update(new Student(s.getId(),s.getName(),s.getAddress(),s.getTel(),s.getRegDate()));
+    }
+
 }

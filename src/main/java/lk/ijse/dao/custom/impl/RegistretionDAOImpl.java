@@ -6,9 +6,11 @@ import lk.ijse.entity.Registration;
 import lk.ijse.entity.Student;
 import lk.ijse.tdm.RegistrationTM;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RegistretionDAOImpl implements RegistretionDAO {
@@ -82,5 +84,37 @@ public class RegistretionDAOImpl implements RegistretionDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public List<Object[]> loadAllRegistrationDetails() {
+        Session session = SessionFactoryConfiguration.getInstance().getSession();
+        Transaction transaction = null;
+        List<Object[]> results = new ArrayList<>();
+
+        try {
+            transaction = session.beginTransaction();
+
+            String hql = "SELECT r.regId, s.id, s.name, p.p_id, p.p_name,r.paidAmount FROM Registration r JOIN r.student s JOIN r.program p";
+
+            Query<Object[]> query = session.createQuery(hql, Object[].class);
+
+            // Execute the query and get the result list
+            results = query.getResultList();
+
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            try {
+                session.close();
+            } catch (Exception closeException) {
+                closeException.printStackTrace();
+            }
+        }
+        return results;
     }
 }
