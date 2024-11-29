@@ -4,8 +4,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import lk.ijse.bo.BoFactory;
 import lk.ijse.bo.custom.UserBO;
 import lk.ijse.dto.ProgramDTO;
@@ -13,9 +18,11 @@ import lk.ijse.dto.UserDTO;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 public class ManageUsersController {
 
+    public AnchorPane rootNode;
     @FXML
     private TableColumn<?, ?> ColRole;
 
@@ -127,5 +134,13 @@ public class ManageUsersController {
             txtUserName.setText(String.valueOf(userDto.getUsername()));
             cmbRole.setValue(userDto.getRole());
         }
+    }
+
+    public void btnLoginOnAction(ActionEvent actionEvent) throws IOException {
+        Parent loginForm = FXMLLoader.load(getClass().getResource("/view/LoginPage.fxml"));
+        Scene scene = new Scene(loginForm);
+        Stage stage = (Stage) rootNode.getScene().getWindow();
+        stage.setScene(scene);
+        stage.setTitle("The Culinary Academy");
     }
 }
